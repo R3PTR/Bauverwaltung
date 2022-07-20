@@ -1,10 +1,13 @@
+import com.company.employee.Employee;
+import com.company.job.Job;
+
 public class Verwaltung {
-    private Mitarbeiter mitarbeiter;
-    private Auftrag auftrag;
+    private Employee employee;
+    private Job job;
 
   /* public Verwaltung () {
-        mitarbeiter = new Mitarbeiter( Vo,  Na, Pe,  Be,  Ei,  Ja);
-        auftrag = new Auftrag();
+        mitarbeiter = new com.company.employee.Mitarbeiter( Vo,  Na, Pe,  Be,  Ei,  Ja);
+        auftrag = new com.company.job.Auftrag();
 
     }
 

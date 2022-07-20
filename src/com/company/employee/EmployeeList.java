@@ -1,16 +1,17 @@
-import javax.naming.Name;
+package com.company.employee;
+
 import java.util.ArrayList;
 
-public class MitarbeiterListe
+public class EmployeeList
 {
-    public ArrayList<Mitarbeiter> MitarbeiterList;
+    public ArrayList<Employee> employeeList;
     public static void main(String[] args)
     {
-        ArrayList<Mitarbeiter> MitarbeiterList = new ArrayList<Mitarbeiter>();
+        ArrayList<Employee> employeeList = new ArrayList<Employee>();
 
-        Mitarbeiter mitarbeiter1 = new Mitarbeiter("Janis", "Nürnberg", "Bauleiter", "13.04.2019", 1, 60000);
+        // com.company.employee.Mitarbeiter mitarbeiter1 = new com.company.employee.Mitarbeiter("Janis", "Nürnberg", "Bauleiter", "13.04.2019", 1, 60000);
 
-        MitarbeiterList.add(mitarbeiter1);
+        // MitarbeiterList.add(mitarbeiter1);
 
 
 
@@ -35,8 +36,8 @@ public class MitarbeiterListe
     }
     public void hinzufuegen(String Vor, String Nac, String Ber, String Ein, int Per, int Jah)
     {
-        Mitarbeiter zeit = new Mitarbeiter(Vor, Nac, Ber, Ein, Per, Jah);
-        MitarbeiterList.add(zeit);
+        //com.company.employee.Mitarbeiter zeit = new com.company.employee.Mitarbeiter(Vor, Nac, Ber, Ein, Per, Jah);
+        //MitarbeiterList.add(zeit);
 
     }
 }

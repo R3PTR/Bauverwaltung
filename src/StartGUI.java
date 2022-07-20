@@ -1,32 +1,35 @@
+import com.company.employee.EmployeeGUI;
+import com.company.job.JobGUI;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class  StartGUI implements ActionListener {
 
-    private JButton k1;
-    private MitarbeiterGUI gui1;
-    private JButton k2;
-    private AuftragGUI gui2;
+    private JButton employees;
+    private EmployeeGUI gui1;
+    private JButton contract;
+    private JobGUI gui2;
 
     public StartGUI() {
-        JFrame f1 = new JFrame("Verwaltungsprogramm");
-        f1.setSize(2000, 1000);
-        f1.setLocationRelativeTo(null);
-        f1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f1.setLayout(null);
+        JFrame mainFrame = new JFrame("Verwaltungsprogramm");
+        mainFrame.setSize(1280, 720);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setLayout(null);
 
-        k1 = new JButton("Mitarbeiter");
-        k1.setBounds(375,300,350,100);
-        k1.addActionListener(this);
-        f1.add(k1);
+        employees = new JButton("Mitarbeiter");
+        employees.setBounds(375,300,350,100);
+        employees.addActionListener(this);
+        mainFrame.add(employees);
 
-        k2 = new JButton("Aufträge");
-        k2.setBounds(725,300,350,100);
-        k2.addActionListener(this);
-        f1.add(k2);
+        contract = new JButton("Aufträge");
+        contract.setBounds(725,300,350,100);
+        contract.addActionListener(this);
+        mainFrame.add(contract);
 
-        f1.setVisible(true);
+        mainFrame.setVisible(true);
 
     }
 
@@ -36,12 +39,12 @@ public class  StartGUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == k1) {
-            gui1 = new MitarbeiterGUI();
+        if(e.getSource() == employees) {
+            gui1 = new EmployeeGUI();
         }
 
-        if(e.getSource() == k2) {
-            gui2 = new AuftragGUI();
+        if(e.getSource() == contract) {
+            gui2 = new JobGUI();
         }
      }
 }

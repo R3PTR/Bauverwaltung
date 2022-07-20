@@ -1,12 +1,12 @@
+package com.company.employee;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import javax.swing.JTable;
-import javax.swing.JFrame;
+import javax.swing.table.JTableHeader;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MitarbeiterGUI implements ActionListener {
+public class EmployeeGUI implements ActionListener {
 
         public JButton knopf1;
         public JButton knopf2;
@@ -25,13 +25,10 @@ public class MitarbeiterGUI implements ActionListener {
         public JTextField text6;
         public JTable table1;
         public JTableHeader header1;
-        public MitarbeiterListe mitarbeiterliste;
+        public EmployeeList mitarbeiterliste;
 
-
-        Mitarbeiter m1 = new Mitarbeiter();
-
-    public MitarbeiterGUI() {
-            mitarbeiterliste = new MitarbeiterListe();
+    public EmployeeGUI() {
+            mitarbeiterliste = new EmployeeList();
             JFrame f2 = new JFrame();
             f2.setTitle("Mitarbeiter");
             f2.setSize(2000, 1000);
@@ -42,9 +39,10 @@ public class MitarbeiterGUI implements ActionListener {
             knopf1 = new JButton("Hinzufügen");
             knopf1.setBounds(200, 520, 350, 75);
             knopf1.addActionListener(this);
+            text1 = new JTextField();
             f2.add(knopf1);
-            m1.vorname = text1.getText();
-            String test = m1.vorname;
+            //m1.firstName = text1.getText();
+            //String test = m1.firstName;
 
             /*Folgendes Suchen: Actionslistener der regestriert den JButton - rausgelesen in Strings und wieder übertragbar in JTable
             *                   Das auf alle KAtegorien kopieren
@@ -63,7 +61,7 @@ public class MitarbeiterGUI implements ActionListener {
             vorname = new JLabel("Vorname:");
             vorname.setBounds(50, 30, 150, 20);
             f2.add(vorname);
-            text1 = new JTextField();
+
             text1.setBounds(200, 30, 350, 20);
             f2.add(text1);
 
@@ -121,7 +119,7 @@ public class MitarbeiterGUI implements ActionListener {
             String col[] = {"vn", "nn", "be", "ed", "pn", "jg"};
             DefaultTableModel model = new DefaultTableModel(ro, col);
             JTable table1 = new JTable(model);
-            model.insertRow(0, new Object[] {test, "100", "99","98", "97", "96"});
+            //model.insertRow(0, new Object[] {test, "100", "99","98", "97", "96"});
             p1.add(table1);
 
             f2.setVisible(true);
@@ -129,7 +127,7 @@ public class MitarbeiterGUI implements ActionListener {
     }
 
 
-    public static void main(String[] args){new MitarbeiterGUI();}
+    public static void main(String[] args){new EmployeeGUI();}
 
         @Override
         public void actionPerformed(ActionEvent e) {
