@@ -1,8 +1,10 @@
 package com.company.job;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -12,7 +14,9 @@ public class JobGUI implements ActionListener {
 
     private JButton addJobButton;
     private JButton deleteJobButton;
-    private JButton modifyJob;
+    private JButton modifyJobButton;
+    private JButton exportJobsButton;
+    private JButton importJobsButton;
     private JLabel clientLabel;
     private JTextField client;
     private JLabel postCodeLabel;
@@ -31,6 +35,16 @@ public class JobGUI implements ActionListener {
 
     private DefaultTableModel defaultTableModel;
 
+    private int activeRow = -1;
+
+    private JLabel outputLabel;
+
+    private JTextArea output;
+
+    private JLabel employeeLabel;
+
+    private JList employees;
+
     public static List<Job> jobList = new ArrayList<>();
 
     public JobGUI() {
@@ -43,17 +57,11 @@ public class JobGUI implements ActionListener {
 
         jobFrame.setLayout(null);
 
-        addJobButtonToFrame();
+        addAddJobButtonToFrame();
 
-        deleteJobButton = new JButton("Löschen");
-        deleteJobButton.setBounds(150,595,400,75);
-        deleteJobButton.addActionListener(this);
-        jobFrame.add(deleteJobButton);
+        addDeleteJobButtonToFrame();
 
-        modifyJob = new JButton("Ändern");
-        modifyJob.setBounds(150,670,400,75);
-        modifyJob.addActionListener(this);
-        jobFrame.add(modifyJob);
+        addModifyJobButtonToFrame();
 
         clientLabel = new JLabel("Auftraggeber:");
         clientLabel.setBounds(50,30,150,20);
@@ -80,8 +88,13 @@ public class JobGUI implements ActionListener {
         descriptionLabel.setBounds(50,205,150,20);
         jobFrame.add(descriptionLabel);
         description = new JTextArea();
-        description.setBounds(150,205,400,300);
+        description.setBounds(150,205,400,140);
         jobFrame.add(description);
+
+        employeeLabel = new JLabel("Mitarbeiter:");
+        employeeLabel.setBounds(50,355,150,20);
+        jobFrame.add(employeeLabel);
+
 
         startDateLabel = new JLabel("Startdatum:");
         startDateLabel.setBounds(50,135,150,20);
@@ -89,6 +102,16 @@ public class JobGUI implements ActionListener {
         startDate = new JTextField();
         startDate.setBounds(150,135,400,20);
         jobFrame.add(startDate);
+
+        addJobTableToFrame();
+
+        outputLabel = new JLabel("Output:");
+        outputLabel.setBounds(580, 550,150,20);
+        jobFrame.add(outputLabel);
+        output = new JTextArea();
+        output.setBounds(580,580,400,100);
+        output.setEditable(false);
+        jobFrame.add(output);
 
 
         endDateLabel = new JLabel("Enddatum:");
@@ -98,29 +121,138 @@ public class JobGUI implements ActionListener {
         endDate.setBounds(150,170,400,20);
         jobFrame.add(endDate);
 
-        String[] jobTableHeader={"Auftragsnummer", "Auftraggeber","Postleitzahl","Adresse","Startdatum","Enddatum","Aufgaben"};
-        defaultTableModel = new DefaultTableModel(jobTableHeader, 0);
-        defaultTableModel.addRow(jobTableHeader);
-        jobTable = new JTable(defaultTableModel);
-        jobTable.setBounds(580, 30,815, 710);
-        jobTable.setShowGrid(true);
+        addExportButtonToFrame();
 
-
-        jobFrame.add(jobTable);
+        addImportButtonToFrame();
 
         jobFrame.setVisible(true);
     }
 
-    private void addJobButtonToFrame() {
+    private void addImportButtonToFrame() {
+        importJobsButton = new JButton("Importieren");
+        importJobsButton.setBounds(1000,550,400,75);
+        importJobsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        jobFrame.add(importJobsButton);
+    }
+
+    private void addExportButtonToFrame() {
+        exportJobsButton = new JButton("Exportieren");
+        exportJobsButton.setBounds(1000,650,400,75);
+        exportJobsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jFileChooser = new JFileChooser();
+                FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("csv", "csv");
+                jFileChooser.setFileFilter(extensionFilter);
+                int status = jFileChooser.showSaveDialog(null);
+                if(status == JFileChooser.APPROVE_OPTION) {
+                    File f = jFileChooser.getSelectedFile();
+
+                    log(f.getName());
+                }
+            }
+        });
+        jobFrame.add(exportJobsButton);
+    }
+
+    private void addModifyJobButtonToFrame() {
+        modifyJobButton = new JButton("Ändern");
+        modifyJobButton.setBounds(150, 670, 400, 75);
+        modifyJobButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(activeRow != -1) {
+                    JobGUI.jobList.add(activeRow-1, new Job(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate()));
+                    String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
+                    defaultTableModel.removeRow(activeRow);
+                    defaultTableModel.insertRow(activeRow, jobArray);
+                    resetTextFields();
+                    output.setText("Job geändert");
+                }
+            }
+        });
+        jobFrame.add(modifyJobButton);
+    }
+
+    private void addDeleteJobButtonToFrame() {
+        deleteJobButton = new JButton("Löschen");
+        deleteJobButton.setBounds(150,595,400,75);
+        deleteJobButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(activeRow != -1) {
+                    JobGUI.jobList.remove(activeRow-1);
+                    defaultTableModel.removeRow(activeRow);
+                    resetTextFields();
+                    output.setText("Job gelöscht");
+                }
+
+
+            }
+        });
+        jobFrame.add(deleteJobButton);
+    }
+
+    private void addJobTableToFrame() {
+        String[] jobTableHeader={"Auftraggeber","Postleitzahl","Adresse","Startdatum","Enddatum", "Aufgaben"};
+        defaultTableModel = new DefaultTableModel(jobTableHeader, 0);
+        defaultTableModel.addRow(jobTableHeader);
+        jobTable = new JTable(defaultTableModel);
+        jobTable.setBounds(580, 30,815, 500);
+        jobTable.setShowGrid(true);
+        jobTable.setDefaultEditor(Object.class, null);
+        jobTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                activeRow = jobTable.getSelectedRow();
+                if(activeRow == 0)
+                    return;
+                client.setText((String) jobTable.getValueAt(activeRow, 0));
+                postCode.setText((String) jobTable.getValueAt(activeRow, 1));
+                address.setText((String) jobTable.getValueAt(activeRow, 2));
+                startDate.setText((String) jobTable.getValueAt(activeRow, 3));
+                endDate.setText((String) jobTable.getValueAt(activeRow, 4));
+                description.setText(JobGUI.jobList.get(activeRow-1).getDescription());
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        jobFrame.add(jobTable);
+    }
+
+    private void addAddJobButtonToFrame() {
         addJobButton = new JButton("Hinzufügen");
         addJobButton.setBounds(150,520,400,75);
         addJobButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JobGUI.jobList.add(new Job(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate()));
-                String[] jobArray = {client.getText(), postCode.getText(), address.getText(), description.getText(), startDate.getText(), endDate.getText()};
+                String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
                 defaultTableModel.addRow(jobArray);
-                log(JobGUI.jobList.toString());
+                resetTextFields();
+                output.setText("Neuer Job angelegt");
             }
         });
         jobFrame.add(addJobButton);
@@ -132,6 +264,16 @@ public class JobGUI implements ActionListener {
     private LocalDate getEndDate() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(this.endDate.getText(), dateTimeFormatter);
+    }
+
+    private void resetTextFields() {
+        client.setText("");
+        postCode.setText("");
+        address.setText("");
+        description.setText("");
+        startDate.setText("");
+        endDate.setText("");
+        activeRow = -1;
     }
 
     public static void main(String[] args){new JobGUI();}
