@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -95,6 +95,11 @@ public class JobGUI implements ActionListener {
         employeeLabel.setBounds(50,355,150,20);
         jobFrame.add(employeeLabel);
 
+        DefaultListModel<String> defaultListModel = new DefaultListModel<>();
+
+        employees = new JList(defaultListModel);
+        employees.setBounds(150,355,400,140);
+        jobFrame.add(employees);
 
         startDateLabel = new JLabel("Startdatum:");
         startDateLabel.setBounds(50,135,150,20);
@@ -134,7 +139,31 @@ public class JobGUI implements ActionListener {
         importJobsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                JFileChooser jFileChooser = new JFileChooser();
+                FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("csv", "csv");
+                jFileChooser.setFileFilter(extensionFilter);
+                int status = jFileChooser.showOpenDialog(null);
+                if(status == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new FileReader(jFileChooser.getSelectedFile()));
+                        String line = bufferedReader.readLine();
+                        while (line != null) {
+                            if(!line.equals("Auftraggeber,Postleitzahl,Adresse,Startdatum,Enddatum,Aufgaben")) {
+                                String[] entries = line.split(",");
+                                Job job = new Job(entries[0], entries[1], entries[2], entries[5].replace("|", "\n"), getDateFromString(entries[3]), getDateFromString(entries[4]));
+                                JobGUI.jobList.add(job);
+                                entries[5] = "Zum Anzeigen klicken";
+                                defaultTableModel.addRow(entries);
+                            }
+                            line = bufferedReader.readLine();
+                        }
+                        output.setText("Jobs importiert");
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
         jobFrame.add(importJobsButton);
@@ -146,14 +175,43 @@ public class JobGUI implements ActionListener {
         exportJobsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(JobGUI.jobList.size() <1) {
+                    output.setText("Keine Jobs zum Exportieren vorhanden!");
+                    return;
+                }
                 JFileChooser jFileChooser = new JFileChooser();
                 FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("csv", "csv");
                 jFileChooser.setFileFilter(extensionFilter);
                 int status = jFileChooser.showSaveDialog(null);
                 if(status == JFileChooser.APPROVE_OPTION) {
                     File f = jFileChooser.getSelectedFile();
+                    int extensionIndex = f.getName().lastIndexOf('.');
+                    if(extensionIndex == -1) {
+                        f = new File(f.getParent(), f.getName() + ".csv");
+                    } else {
+                        String name = f.getName().substring(0, extensionIndex);
+                        f = new File(f.getParent(), name + ".csv");
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Auftraggeber,Postleitzahl,Adresse,Startdatum,Enddatum,Aufgaben\n");
+                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-                    log(f.getName());
+                    for (int i = 0; i<JobGUI.jobList.size(); i++) {
+                        Job job = JobGUI.jobList.get(i);
+                        sb.append(job.getClient()).append(",").append(job.getPostCode()).append(",").append(job.getAddress()).append(",").append(job.getStartDate().format(dateTimeFormatter)).append(",").append(job.getEndDate().format(dateTimeFormatter)).append(",").append(job.getDescription().replace("\n", "|"));
+                        if(i < JobGUI.jobList.size()-1) {
+                          sb.append("\n");
+                        }
+                    }
+                    try {
+                        PrintWriter printWriter = new PrintWriter(f);
+                        printWriter.print(sb.toString());
+                        printWriter.close();
+                        output.setText("Jobs exportiert");
+                    } catch (FileNotFoundException ex) {
+                        output.setText("Fehler beim Export");
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         });
@@ -264,6 +322,11 @@ public class JobGUI implements ActionListener {
     private LocalDate getEndDate() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(this.endDate.getText(), dateTimeFormatter);
+    }
+
+    private LocalDate getDateFromString(String date) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return LocalDate.parse(date, dateTimeFormatter);
     }
 
     private void resetTextFields() {

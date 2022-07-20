@@ -1,144 +1,354 @@
 package com.company.employee;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeGUI implements ActionListener {
 
-        public JButton knopf1;
-        public JButton knopf2;
-        public JButton knopf3;
-        public JLabel vorname;
-        public JTextField text1;
-        public JLabel nachname;
-        public JTextField text2;
-        public JLabel berufsbezeichnung;
-        public JTextField text3;
-        public JLabel einstellungsdatum;
-        public JTextField text4;
-        public JLabel personalnummer;
-        public JTextField text5;
-        public JLabel jahresgehalt;
-        public JTextField text6;
-        public JTable table1;
-        public JTableHeader header1;
-        public EmployeeList mitarbeiterliste;
+        private JButton addEmployeeButton;
+        private JButton deleteEmployeeButton;
+        private JButton modifyemployeeButton;
+        private JButton exportemployeesButton;
+        private JButton importemployeesButton;
+        private JLabel clientLabel;
+        private JTextField client;
+        private JLabel postCodeLabel;
+        private JTextField postCode;
+        private JLabel addressLabel;
+        private JTextField address;
+        private JLabel descriptionLabel;
+        private JTextArea description;
+        private JLabel startDateLabel;
+        private JTextField startDate;
+        private JLabel endDateLabel;
+        private JTextField endDate;
+        private JTable employeeTable;
 
-    public EmployeeGUI() {
-            mitarbeiterliste = new EmployeeList();
-            JFrame f2 = new JFrame();
-            f2.setTitle("Mitarbeiter");
-            f2.setSize(2000, 1000);
-            f2.setLocationRelativeTo(null);
+        private JFrame employeeFrame;
 
-            f2.setLayout(null);
+        private DefaultTableModel defaultTableModel;
 
-            knopf1 = new JButton("Hinzufügen");
-            knopf1.setBounds(200, 520, 350, 75);
-            knopf1.addActionListener(this);
-            text1 = new JTextField();
-            f2.add(knopf1);
-            //m1.firstName = text1.getText();
-            //String test = m1.firstName;
+        private int activeRow = -1;
 
-            /*Folgendes Suchen: Actionslistener der regestriert den JButton - rausgelesen in Strings und wieder übertragbar in JTable
-            *                   Das auf alle KAtegorien kopieren
-            *                   Hinzufügen und Löschen erstmal*/
+        private JLabel outputLabel;
 
-            knopf2 = new JButton("Löschen");
-            knopf2.setBounds(200, 595, 350, 75);
-            knopf2.addActionListener(this);
-            f2.add(knopf2);
+        private JTextArea output;
 
-            knopf3 = new JButton("Ändern");
-            knopf3.setBounds(200, 670, 350, 75);
-            knopf3.addActionListener(this);
-            f2.add(knopf3);
+        private JLabel employeeLabel;
 
-            vorname = new JLabel("Vorname:");
-            vorname.setBounds(50, 30, 150, 20);
-            f2.add(vorname);
+        private JList employees;
 
-            text1.setBounds(200, 30, 350, 20);
-            f2.add(text1);
+        public static List<Employee> employeeList = new ArrayList<>();
 
-            nachname = new JLabel("Nachname:");
-            nachname.setBounds(50, 65, 150, 20);
-            f2.add(nachname);
-            text2 = new JTextField();
-            text2.setBounds(200, 65, 350, 20);
-            f2.add(text2);
+        public EmployeeGUI() {
+                employeeFrame = new JFrame();
+                employeeFrame.setTitle("Aufträge");
+                //16:9 Ratio
+                employeeFrame.setSize(1424, 801);
+                employeeFrame.setResizable(false);
+                employeeFrame.setLocationRelativeTo(null);
 
-            berufsbezeichnung = new JLabel("Berufsfbezeichnung:");
-            berufsbezeichnung.setBounds(50, 100, 150, 20);
-            f2.add(berufsbezeichnung);
-            text3 = new JTextField();
-            text3.setBounds(200, 100, 350, 20);
-            f2.add(text3);
+                employeeFrame.setLayout(null);
 
-            einstellungsdatum = new JLabel("Einstellungsdatum:");
-            einstellungsdatum.setBounds(50, 135, 150, 20);
-            f2.add(einstellungsdatum);
-            text4 = new JTextField();
-            text4.setBounds(200, 135, 350, 20);
-            f2.add(text4);
+                addAddemployeeButtonToFrame();
 
-            personalnummer = new JLabel("Personalnummer:");
-            personalnummer.setBounds(50, 170, 150, 20);
-            f2.add(personalnummer);
-            text5 = new JTextField();
-            text5.setBounds(200, 170, 350, 20);
-            f2.add(text5);
+                addDeleteemployeeButtonToFrame();
 
-            jahresgehalt = new JLabel("Jahresgehalt:");
-            jahresgehalt.setBounds(50, 205, 150, 20);
-            f2.add(jahresgehalt);
-            text6 = new JTextField();
-            text6.setBounds(200, 205, 350, 20);
-            f2.add(text6);
+                addModifyemployeeButtonToFrame();
 
-            //           public static void main( String args[] ) {
-            //                    String rowData[][] = {
-            //                  };
-            //                   String  columnNames[] = {
-            //                           "Vorname", "Nachname", "Berufsbezeichnung", "Einstellungsdatum", "Personalnummer", "Jahresgehalt"
-            //                  };
-            //                table1 = new JTable( rowData, columnNames );
+                clientLabel = new JLabel("Auftraggeber:");
+                clientLabel.setBounds(50,30,150,20);
+                employeeFrame.add(clientLabel);
+                client = new JTextField();
+                client.setBounds(150,30,400,20);
+                employeeFrame.add(client);
 
-            /*table1 = new JTable(30, 6);
-            table1.setBounds(580, 30, 815, 710);
-            table1.setShowGrid(true);
-            //table1.insertRow(0, new Object[] {test});
-            f2.add(table1);*/
+                postCodeLabel = new JLabel("Postleitzahl:");
+                postCodeLabel.setBounds(50,65,150,20);
+                employeeFrame.add(postCodeLabel);
+                postCode = new JTextField();
+                postCode.setBounds(150,65,400,20);
+                employeeFrame.add(postCode);
 
-            JPanel p1 = new JPanel();
-            String ro[][] = {{"test", "100", "99","98", "97", "96"}};
-            String col[] = {"vn", "nn", "be", "ed", "pn", "jg"};
-            DefaultTableModel model = new DefaultTableModel(ro, col);
-            JTable table1 = new JTable(model);
-            //model.insertRow(0, new Object[] {test, "100", "99","98", "97", "96"});
-            p1.add(table1);
+                addressLabel = new JLabel("Adresse:");
+                addressLabel.setBounds(50,100,150,20);
+                employeeFrame.add(addressLabel);
+                address = new JTextField();
+                address.setBounds(150,100,400,20);
+                employeeFrame.add(address);
 
-            f2.setVisible(true);
+                descriptionLabel = new JLabel("Aufgaben:");
+                descriptionLabel.setBounds(50,205,150,20);
+                employeeFrame.add(descriptionLabel);
+                description = new JTextArea();
+                description.setBounds(150,205,400,140);
+                employeeFrame.add(description);
 
-    }
+                employeeLabel = new JLabel("Mitarbeiter:");
+                employeeLabel.setBounds(50,355,150,20);
+                employeeFrame.add(employeeLabel);
+
+                DefaultListModel<String> defaultListModel = new DefaultListModel<>();
+
+                employees = new JList(defaultListModel);
+                employees.setBounds(150,355,400,140);
+                employeeFrame.add(employees);
+
+                startDateLabel = new JLabel("Startdatum:");
+                startDateLabel.setBounds(50,135,150,20);
+                employeeFrame.add(startDateLabel);
+                startDate = new JTextField();
+                startDate.setBounds(150,135,400,20);
+                employeeFrame.add(startDate);
+
+                addemployeeTableToFrame();
+
+                outputLabel = new JLabel("Output:");
+                outputLabel.setBounds(580, 550,150,20);
+                employeeFrame.add(outputLabel);
+                output = new JTextArea();
+                output.setBounds(580,580,400,100);
+                output.setEditable(false);
+                employeeFrame.add(output);
 
 
-    public static void main(String[] args){new EmployeeGUI();}
+                endDateLabel = new JLabel("Enddatum:");
+                endDateLabel.setBounds(50,170,150,20);
+                employeeFrame.add(endDateLabel);
+                endDate = new JTextField();
+                endDate.setBounds(150,170,400,20);
+                employeeFrame.add(endDate);
+
+                addExportButtonToFrame();
+
+                addImportButtonToFrame();
+
+                employeeFrame.setVisible(true);
+        }
+
+        private void addImportButtonToFrame() {
+                importemployeesButton = new JButton("Importieren");
+                importemployeesButton.setBounds(1000,550,400,75);
+                importemployeesButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                JFileChooser jFileChooser = new JFileChooser();
+                                FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("csv", "csv");
+                                jFileChooser.setFileFilter(extensionFilter);
+                                int status = jFileChooser.showOpenDialog(null);
+                                if(status == JFileChooser.APPROVE_OPTION) {
+                                        try {
+                                                BufferedReader bufferedReader = new BufferedReader(new FileReader(jFileChooser.getSelectedFile()));
+                                                String line = bufferedReader.readLine();
+                                                while (line != null) {
+                                                        if(!line.equals("Auftraggeber,Postleitzahl,Adresse,Startdatum,Enddatum,Aufgaben")) {
+                                                                String[] entries = line.split(",");
+                                                                // employee = new employee(entries[0], entries[1], entries[2], entries[5].replace("|", "\n"), getDateFromString(entries[3]), getDateFromString(entries[4]));
+                                                                // employeeGUI.employeeList.add(employee);
+                                                                entries[5] = "Zum Anzeigen klicken";
+                                                                defaultTableModel.addRow(entries);
+                                                        }
+                                                        line = bufferedReader.readLine();
+                                                }
+                                                output.setText("employees importiert");
+                                        } catch (FileNotFoundException ex) {
+                                                throw new RuntimeException(ex);
+                                        } catch (IOException ex) {
+                                                throw new RuntimeException(ex);
+                                        }
+                                }
+                        }
+                });
+                employeeFrame.add(importemployeesButton);
+        }
+
+        private void addExportButtonToFrame() {
+                exportemployeesButton = new JButton("Exportieren");
+                exportemployeesButton.setBounds(1000,650,400,75);
+                exportemployeesButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                if(EmployeeGUI.employeeList.size() <1) {
+                                        output.setText("Keine employees zum Exportieren vorhanden!");
+                                        return;
+                                }
+                                JFileChooser jFileChooser = new JFileChooser();
+                                FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("csv", "csv");
+                                jFileChooser.setFileFilter(extensionFilter);
+                                int status = jFileChooser.showSaveDialog(null);
+                                if(status == JFileChooser.APPROVE_OPTION) {
+                                        File f = jFileChooser.getSelectedFile();
+                                        int extensionIndex = f.getName().lastIndexOf('.');
+                                        if(extensionIndex == -1) {
+                                                f = new File(f.getParent(), f.getName() + ".csv");
+                                        } else {
+                                                String name = f.getName().substring(0, extensionIndex);
+                                                f = new File(f.getParent(), name + ".csv");
+                                        }
+                                        StringBuilder sb = new StringBuilder();
+                                        sb.append("Auftraggeber,Postleitzahl,Adresse,Startdatum,Enddatum,Aufgaben\n");
+                                        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+                                        for (int i = 0; i<EmployeeGUI.employeeList.size(); i++) {
+                                                Employee employee = EmployeeGUI.employeeList.get(i);
+                                                //sb.append(employee.getClient()).append(",").append(employee.getPostCode()).append(",").append(employee.getAddress()).append(",").append(employee.getStartDate().format(dateTimeFormatter)).append(",").append(employee.getEndDate().format(dateTimeFormatter)).append(",").append(employee.getDescription().replace("\n", "|"));
+                                                if(i < EmployeeGUI.employeeList.size()-1) {
+                                                        sb.append("\n");
+                                                }
+                                        }
+                                        try {
+                                                PrintWriter printWriter = new PrintWriter(f);
+                                                printWriter.print(sb.toString());
+                                                printWriter.close();
+                                                output.setText("employees exportiert");
+                                        } catch (FileNotFoundException ex) {
+                                                output.setText("Fehler beim Export");
+                                                throw new RuntimeException(ex);
+                                        }
+                                }
+                        }
+                });
+                employeeFrame.add(exportemployeesButton);
+        }
+
+        private void addModifyemployeeButtonToFrame() {
+                modifyemployeeButton = new JButton("Ändern");
+                modifyemployeeButton.setBounds(150, 670, 400, 75);
+                modifyemployeeButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                if(activeRow != -1) {
+                                        //EmployeeGUI.employeeList.add(activeRow-1, new Employee(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate()));
+                                        String[] employeeArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
+                                        defaultTableModel.removeRow(activeRow);
+                                        defaultTableModel.insertRow(activeRow, employeeArray);
+                                        resetTextFields();
+                                        output.setText("employee geändert");
+                                }
+                        }
+                });
+                employeeFrame.add(modifyemployeeButton);
+        }
+
+        private void addDeleteemployeeButtonToFrame() {
+                deleteEmployeeButton = new JButton("Löschen");
+                deleteEmployeeButton.setBounds(150,595,400,75);
+                deleteEmployeeButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                if(activeRow != -1) {
+                                        EmployeeGUI.employeeList.remove(activeRow-1);
+                                        defaultTableModel.removeRow(activeRow);
+                                        resetTextFields();
+                                        output.setText("employee gelöscht");
+                                }
+
+
+                        }
+                });
+                employeeFrame.add(deleteEmployeeButton);
+        }
+
+        private void addemployeeTableToFrame() {
+                String[] employeeTableHeader={"Auftraggeber","Postleitzahl","Adresse","Startdatum","Enddatum", "Aufgaben"};
+                defaultTableModel = new DefaultTableModel(employeeTableHeader, 0);
+                defaultTableModel.addRow(employeeTableHeader);
+                employeeTable = new JTable(defaultTableModel);
+                employeeTable.setBounds(580, 30,815, 500);
+                employeeTable.setShowGrid(true);
+                employeeTable.setDefaultEditor(Object.class, null);
+                employeeTable.addMouseListener(new MouseListener() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                                activeRow = employeeTable.getSelectedRow();
+                                if(activeRow == 0)
+                                        return;
+                                client.setText((String) employeeTable.getValueAt(activeRow, 0));
+                                postCode.setText((String) employeeTable.getValueAt(activeRow, 1));
+                                address.setText((String) employeeTable.getValueAt(activeRow, 2));
+                                startDate.setText((String) employeeTable.getValueAt(activeRow, 3));
+                                endDate.setText((String) employeeTable.getValueAt(activeRow, 4));
+                                //description.setText(EmployeeGUI.employeeList.get(activeRow-1).getDescription());
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+
+                        }
+                });
+                employeeFrame.add(employeeTable);
+        }
+
+        private void addAddemployeeButtonToFrame() {
+                addEmployeeButton = new JButton("Hinzufügen");
+                addEmployeeButton.setBounds(150,520,400,75);
+                addEmployeeButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                //EmployeeGUI.employeeList.add(new Employee(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate()));
+                                String[] employeeArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
+                                defaultTableModel.addRow(employeeArray);
+                                resetTextFields();
+                                output.setText("Neuer employee angelegt");
+                        }
+                });
+                employeeFrame.add(addEmployeeButton);
+        }
+        private LocalDate getStartDate() {
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                return LocalDate.parse(this.startDate.getText(), dateTimeFormatter);
+        }
+        private LocalDate getEndDate() {
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                return LocalDate.parse(this.endDate.getText(), dateTimeFormatter);
+        }
+
+        private LocalDate getDateFromString(String date) {
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                return LocalDate.parse(date, dateTimeFormatter);
+        }
+
+        private void resetTextFields() {
+                client.setText("");
+                postCode.setText("");
+                address.setText("");
+                description.setText("");
+                startDate.setText("");
+                endDate.setText("");
+                activeRow = -1;
+        }
+
+        public static void main(String[] args){new EmployeeGUI();}
+
+        private void log(Object output) {
+                System.out.println(output);
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
-                if (e.getSource() == knopf1)
-                {
-                  mitarbeiterliste.hinzufuegen(text1.getText(),  text2.getText(), text3.getText(), text4.getText(), Integer.parseInt(text5.getText()), Integer.parseInt(text6.getText()));
-
-                }
-
         }
-
-
 }
