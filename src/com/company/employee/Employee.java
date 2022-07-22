@@ -1,35 +1,27 @@
 package com.company.employee;
 
+import java.time.LocalDate;
+
 public class Employee {
 
-    public String firstName;
-    public String lastName;
+    public String name;
     public String jobTitle;
-    public String hireDate;
+    public LocalDate hireDate;
     public int annualSalary;
 
-    public Employee(String firstName, String lastName, String jobTitle, String hireDate, int annualSalary) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Employee(String name, String jobTitle, LocalDate hireDate, int annualSalary) {
+        this.name = name;
         this.jobTitle = jobTitle;
         this.hireDate = hireDate;
         this.annualSalary = annualSalary;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getJobTitle() {
@@ -40,11 +32,11 @@ public class Employee {
         this.jobTitle = jobTitle;
     }
 
-    public String getHireDate() {
+    public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(String hireDate) {
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
     }
 
