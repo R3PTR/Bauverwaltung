@@ -34,10 +34,11 @@ public class DatapaperGUI {
         datapaper.append("Startdatum: " + job.getStartDate().format(dateTimeFormatter) + " Enddatum: " + job.getEndDate().format(dateTimeFormatter) + "\n");
         datapaper.append("Aufgaben: " + job.getDescription() + "\n");
         datapaper.append("Mitarbeiter: \n");
-        for(Employee employee : JobGUI.employeeToJob.get(job)) {
-            datapaper.append("Name: " + employee.getName() + " | Berufsbezeichnung: " + employee.getJobTitle() + " | Einstellungsdatum: " + employee.getHireDate().format(dateTimeFormatter) + " | Jahresgehalt: " + String.valueOf(employee.getAnnualSalary()) + "\n");
+        if(JobGUI.employeeToJob.get(job) != null) {
+            for(Employee employee : JobGUI.employeeToJob.get(job)) {
+                datapaper.append("Name: " + employee.getName() + " | Berufsbezeichnung: " + employee.getJobTitle() + " | Einstellungsdatum: " + employee.getHireDate().format(dateTimeFormatter) + " | Jahresgehalt: " + String.valueOf(employee.getAnnualSalary()) + "\n");
+            }
         }
-
         datapaperFrame.setVisible(true);
     }
 }

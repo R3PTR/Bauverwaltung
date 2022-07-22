@@ -188,16 +188,27 @@ public class JobGUI {
             for(Employee employee : EmployeeGUI.employeeList) {
                 for(String name : (List<String>) employees.getSelectedValuesList()) {
                     if(name.equals(employee.getName())) {
-                        if(!employee.getHireDate().isBefore(job.getStartDate())) {
-                            for(Job jobs : JobGUI.jobToEmployee.get(employee)) {
-                                if(isOverlapping(job.getStartDate(), job.getEndDate(),jobs.getStartDate(), jobs.getEndDate())) {
-                                    correct = false;
-                                    output.append("Startdaten von Jobs von: " + employee.getName() + " überschneiden sich. \n");
+                        if(employee.getHireDate().isBefore(job.getStartDate())) {
+                            if(JobGUI.jobToEmployee.get(employee) != null) {
+                                for(Job jobs : JobGUI.jobToEmployee.get(employee)) {
+                                    if(isOverlapping(job.getStartDate(), job.getEndDate(),jobs.getStartDate(), jobs.getEndDate())) {
+                                        correct = false;
+                                        output.append("Startdaten von Jobs von: " + employee.getName() + " überschneiden sich. \n");
+                                    }
                                 }
-                            }
-                            if(correct) {
+                                if(correct) {
+                                    employeeList.add(employee);
+                                    JobGUI.jobToEmployee.get(employee).add(job);
+                                }
+                            } else {
                                 employeeList.add(employee);
-                                JobGUI.jobToEmployee.get(employee).add(job);
+                                if(JobGUI.jobToEmployee.get(employee) != null) {
+                                    JobGUI.jobToEmployee.get(employee).add(job);
+                                } else {
+                                    ArrayList<Job> jobArrayList = new ArrayList<>();
+                                    jobArrayList.add(job);
+                                    JobGUI.jobToEmployee.put(employee, jobArrayList);
+                                }
                             }
                         } else {
                             correct = false;
@@ -279,7 +290,7 @@ public class JobGUI {
                                 Job job = new Job(entries[0], entries[1], entries[2], entries[5].replace("|", "\n"), getDateFromString(entries[3]), getDateFromString(entries[4]));
                                 JobGUI.jobList.add(job);
                                 entries[5] = "Zum Anzeigen klicken";
-                                if(!entries[6].equals("|")) {
+                                if(!entries[6].equals("-")) {
                                     String[] employeeList = entries[6].split("\\|");
                                     addEmployeesToJob(job, employeeList);
                                 }

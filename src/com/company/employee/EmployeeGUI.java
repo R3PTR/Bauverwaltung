@@ -124,12 +124,6 @@ public class EmployeeGUI {
                         correct = false;
                 }
                 try {
-                        getStartDate();
-                } catch (Exception e) {
-                        output.append("Einstellungsdatum nicht korrekt!\nIm Format: dd.MM.yyyy eingeben!\n");
-                        correct = false;
-                }
-                try {
                         String.valueOf(annualSalary.getText());
                 } catch (Exception e) {
                         output.append("Jahresgehalt muss eine ganze Zahl sein!\n");
@@ -240,8 +234,6 @@ public class EmployeeGUI {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 if(activeRow != -1) {
-                                        if(!checkInput())
-                                                return;
                                         EmployeeGUI.employeeList.add(activeRow-1, new Employee(name.getText(), jobTitle.getText(), getStartDate(), Integer.parseInt(annualSalary.getText())));
                                         String[] employeeArray = {name.getText(), jobTitle.getText(), startDate.getText(), annualSalary.getText()};
                                         defaultTableModel.removeRow(activeRow);
