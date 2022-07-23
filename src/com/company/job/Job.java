@@ -1,7 +1,6 @@
 package com.company.job;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Job {
 

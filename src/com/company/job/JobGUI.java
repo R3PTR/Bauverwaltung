@@ -190,10 +190,13 @@ public class JobGUI {
                     if(name.equals(employee.getName())) {
                         if(employee.getHireDate().isBefore(job.getStartDate())) {
                             if(JobGUI.jobToEmployee.get(employee) != null) {
+                                JobGUI.jobToEmployee.get(employee).remove(job);
                                 for(Job jobs : JobGUI.jobToEmployee.get(employee)) {
-                                    if(isOverlapping(job.getStartDate(), job.getEndDate(),jobs.getStartDate(), jobs.getEndDate())) {
-                                        correct = false;
-                                        output.append("Startdaten von Jobs von: " + employee.getName() + " überschneiden sich. \n");
+                                    if(job != jobs) {
+                                        if(isOverlapping(job.getStartDate(), job.getEndDate(),jobs.getStartDate(), jobs.getEndDate())) {
+                                            correct = false;
+                                            output.append("Startdaten von Jobs von: " + employee.getName() + " überschneiden sich. \n");
+                                        }
                                     }
                                 }
                                 if(correct) {
@@ -378,8 +381,13 @@ public class JobGUI {
                 if(activeRow != -1) {
                     if(!checkInput())
                         return;
-                    Job job = new Job(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate());
-                    JobGUI.jobList.add(activeRow-1, job);
+                    Job job = JobGUI.jobList.get(activeRow-1);
+                    job.setClient(client.getText());
+                    job.setPostCode(postCode.getText());
+                    job.setAddress(address.getText());
+                    job.setStartDate(getStartDate());
+                    job.setEndDate(getEndDate());
+                    job.setDescription(description.getText());
                     String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
                     defaultTableModel.removeRow(activeRow);
                     defaultTableModel.insertRow(activeRow, jobArray);
@@ -437,12 +445,12 @@ public class JobGUI {
                 startDate.setText((String) jobTable.getValueAt(activeRow, 3));
                 endDate.setText((String) jobTable.getValueAt(activeRow, 4));
                 description.setText(JobGUI.jobList.get(activeRow-1).getDescription());
+                refreshEmployeesList();
                 if(JobGUI.employeeToJob.get(JobGUI.jobList.get(activeRow-1)) != null) {
-                    refreshEmployeesList();
                     ArrayList<Integer> indeces = new ArrayList<Integer>();
                     for (int i = 0; i < EmployeeGUI.employeeList.size(); i++) {
                         for (int j = 0; j < JobGUI.employeeToJob.get(JobGUI.jobList.get(activeRow-1)).size(); j++) {
-                            if(JobGUI.employeeToJob.get(JobGUI.jobList.get(activeRow-1)).get(j).getName().contains(EmployeeGUI.employeeList.get(i).getName())) {
+                            if(JobGUI.employeeToJob.get(JobGUI.jobList.get(activeRow-1)).get(j).getName().equals(EmployeeGUI.employeeList.get(i).getName())) {
                                 indeces.add(i);
                             }
                         }
@@ -485,10 +493,10 @@ public class JobGUI {
                 if(!checkInput())
                     return;
                 Job job = new Job(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate());
-                JobGUI.jobList.add(job);
                 String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
                 defaultTableModel.addRow(jobArray);
                 addEmployeesToJob(job);
+                JobGUI.jobList.add(job);
                 resetTextFields();
                 refreshEmployeesList();
                 output.setText("Neuer Job angelegt");
