@@ -8,6 +8,7 @@ import javax.print.attribute.standard.JobName;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.JTextComponent;
 import java.awt.event.*;
 import java.io.*;
 import java.time.LocalDate;
@@ -136,6 +137,19 @@ public class JobGUI {
             output.append("Auftraggeber muss angegeben werden!\n");
             correct = false;
         }
+        try{
+            Integer.parseInt(postCode.getText());
+        } catch (Exception e) {
+            output.append("Postleitzahl muss eine Zahl sein.\n");
+            correct = false;
+        }
+        if(postCode.getText().length() != 5) {
+            output.append("Postleizahl muss 5 Zeichen lang sein.\n");
+            correct = false;
+        }
+        if(postCode.getText().isBlank()) {
+            output.append("Postleitzahl muss angegeben werden!\n");
+        }
         if(address.getText().isBlank()) {
             output.append("Adresse muss angegeben werden!\n");
             correct = false;
@@ -156,13 +170,9 @@ public class JobGUI {
             output.append("Enddatum nicht korrekt!\nIm Format: dd.MM.yyyy eingeben!\n");
             correct = false;
         }
-        try {
-            String.valueOf(postCode.getText());
-        } catch (Exception e) {
-            output.append("Jahresgehalt muss eine ganze Zahl sein!\n");
-            correct = false;
+        if(!getStartDate().isBefore(getEndDate())) {
+            output.append("Startdatum muss vor Enddatum liegen!\n");
         }
-
         return correct;
     }
 
@@ -341,12 +351,12 @@ public class JobGUI {
 
                     for (int i = 0; i<JobGUI.jobList.size(); i++) {
                         Job job = JobGUI.jobList.get(i);
-                        sb.append(job.getClient()).append(",").append(job.getPostCode()).append(",").append(job.getAddress()).append(",").append(job.getStartDate().format(dateTimeFormatter)).append(",").append(job.getEndDate().format(dateTimeFormatter)).append(",").append(job.getDescription().replace("\n", "|"));
+                        sb.append(job.getClient()).append(",").append(job.getPostCode()).append(",").append(job.getAddress()).append(",").append(job.getStartDate().format(dateTimeFormatter)).append(",").append(job.getEndDate().format(dateTimeFormatter)).append(",").append(job.getDescription().replace("\n", "|")).append(",");
                         List<Employee> employees;
                         if((employees = JobGUI.employeeToJob.get(job)) != null) {
                             for (int j = 0; j <employees.size(); j++) {
                                 sb.append(employees.get(j).getName());
-                                if(i < employees.size()-1) {
+                                if(j < employees.size()-1) {
                                     sb.append("|");
                                 }
                             }
