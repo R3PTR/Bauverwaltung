@@ -245,7 +245,7 @@ public class JobGUI {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             for (int i = 0; i < JobGUI.jobList.size(); i++) {
                 Job job = JobGUI.jobList.get(i);
-                defaultTableModel.addRow(new String[]{job.getClient(), job.getPostCode(), job.getAddress(), job.getStartDate().format(dateTimeFormatter), job.getEndDate().format(dateTimeFormatter), "Zum Anzeigen klicken"});
+                defaultTableModel.addRow(new String[]{job.getClient(), job.getPostCode(), job.getAddress(), job.getStartDate().format(dateTimeFormatter), job.getEndDate().format(dateTimeFormatter), "Siehe Datenblatt"});
             }
         }
     }
@@ -292,7 +292,7 @@ public class JobGUI {
                                 String[] entries = line.split(",");
                                 Job job = new Job(entries[0], entries[1], entries[2], entries[5].replace("|", "\n"), getDateFromString(entries[3]), getDateFromString(entries[4]));
                                 JobGUI.jobList.add(job);
-                                entries[5] = "Zum Anzeigen klicken";
+                                entries[5] = "Siehe Datenblatt";
                                 if(!entries[6].equals("-")) {
                                     String[] employeeList = entries[6].split("\\|");
                                     addEmployeesToJob(job, employeeList);
@@ -388,7 +388,7 @@ public class JobGUI {
                     job.setStartDate(getStartDate());
                     job.setEndDate(getEndDate());
                     job.setDescription(description.getText());
-                    String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
+                    String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Siehe Datenblatt"};
                     defaultTableModel.removeRow(activeRow);
                     defaultTableModel.insertRow(activeRow, jobArray);
                     addEmployeesToJob(job);
@@ -493,7 +493,7 @@ public class JobGUI {
                 if(!checkInput())
                     return;
                 Job job = new Job(client.getText(), postCode.getText(), address.getText(), description.getText(), getStartDate(), getEndDate());
-                String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Zum Anzeigen klicken"};
+                String[] jobArray = {client.getText(), postCode.getText(), address.getText(), startDate.getText(), endDate.getText(), "Siehe Datenblatt"};
                 defaultTableModel.addRow(jobArray);
                 addEmployeesToJob(job);
                 JobGUI.jobList.add(job);

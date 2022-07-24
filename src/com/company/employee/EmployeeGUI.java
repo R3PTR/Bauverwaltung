@@ -1,8 +1,5 @@
 package com.company.employee;
 
-import com.company.job.Job;
-import com.company.job.JobGUI;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -11,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
-import java.security.spec.ECField;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -102,7 +98,7 @@ public class EmployeeGUI {
                 loadPossibleEmployees();
         }
 
-        private boolean checkInput() {
+        private boolean checkInputAdd() {
                 output.setText("");
                 boolean correct = true;
                 if(name.getText().isBlank()) {
@@ -124,9 +120,46 @@ public class EmployeeGUI {
                         correct = false;
                 }
                 try {
-                        String.valueOf(annualSalary.getText());
+                        Integer.parseInt(annualSalary.getText());
                 } catch (Exception e) {
                         output.append("Jahresgehalt muss eine ganze Zahl sein!\n");
+                        correct = false;
+                }
+                try {
+                        getStartDate();
+                } catch (Exception e) {
+                        output.append("Einstellungsdatum nicht korrekt!\nIm Format: dd.MM.yyyy eingeben!\n");
+                        correct = false;
+                }
+
+                return correct;
+        }
+
+        private boolean checkInputModify() {
+                output.setText("");
+                boolean correct = true;
+                if(name.getText().isBlank()) {
+                        output.append("Name muss angegeben werden!\n");
+                        correct = false;
+                }
+                if(name.getText().matches(".*[0-9].*")) {
+                        output.append("Name darf keine Zahlen enthalten!\n");
+                        correct = false;
+                }
+                if(jobTitle.getText().isBlank()) {
+                        output.append("Berufsbezeichnung muss angegeben werden!\n");
+                        correct = false;
+                }
+                try {
+                        Integer.parseInt(annualSalary.getText());
+                } catch (Exception e) {
+                        output.append("Jahresgehalt muss eine ganze Zahl sein!\n");
+                        correct = false;
+                }
+                try {
+                        getStartDate();
+                } catch (Exception e) {
+                        output.append("Einstellungsdatum nicht korrekt!\nIm Format: dd.MM.yyyy eingeben!\n");
                         correct = false;
                 }
 
@@ -234,6 +267,8 @@ public class EmployeeGUI {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 if(activeRow != -1) {
+                                        if(!checkInputModify())
+                                                return;
                                         EmployeeGUI.employeeList.add(activeRow-1, new Employee(name.getText(), jobTitle.getText(), getStartDate(), Integer.parseInt(annualSalary.getText())));
                                         String[] employeeArray = {name.getText(), jobTitle.getText(), startDate.getText(), annualSalary.getText()};
                                         defaultTableModel.removeRow(activeRow);
@@ -256,7 +291,7 @@ public class EmployeeGUI {
                                         EmployeeGUI.employeeList.remove(activeRow-1);
                                         defaultTableModel.removeRow(activeRow);
                                         resetTextFields();
-                                        output.setText("employee gelöscht");
+                                        output.setText("Mitarbeiter gelöscht");
                                 }
 
 
@@ -315,7 +350,7 @@ public class EmployeeGUI {
                 addEmployeeButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                if(!checkInput())
+                                if(!checkInputAdd())
                                         return;
                                 EmployeeGUI.employeeList.add(new Employee(name.getText(), jobTitle.getText(), getStartDate(), Integer.parseInt(annualSalary.getText())));
                                 String[] employeeArray = {name.getText(), jobTitle.getText(), startDate.getText(), annualSalary.getText()};
