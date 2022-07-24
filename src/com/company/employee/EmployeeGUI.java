@@ -98,6 +98,8 @@ public class EmployeeGUI {
                 loadPossibleEmployees();
         }
 
+        // Diese Funktion überprüft, ob alle Felder korrekt ausgefüllt wurden, beim Hinzufügen eines Mitarbeiters.
+        // Ist alles korrekt, wird true zurückgegeben, gibt es einen Fehler wird false zurückgegeben
         private boolean checkInputAdd() {
                 output.setText("");
                 boolean correct = true;
@@ -134,7 +136,8 @@ public class EmployeeGUI {
 
                 return correct;
         }
-
+        // Diese Funktion überprüft, ob alle Felder korrekt ausgefüllt wurden, beim Ändern eines Mitarbeiters.
+        // Ist alles korrekt, wird true zurückgegeben, gibt es einen Fehler wird false zurückgegeben
         private boolean checkInputModify() {
                 output.setText("");
                 boolean correct = true;
@@ -166,6 +169,7 @@ public class EmployeeGUI {
                 return correct;
         }
 
+        // Lädt bereits hinzugefügte Mitarbeiter der Tabelle hinzu, wenn die EmployeeGUI neu geladen wird.
         private void loadPossibleEmployees() {
                 if(EmployeeGUI.employeeList.size() > 0) {
                         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -175,7 +179,7 @@ public class EmployeeGUI {
                         }
                 }
         }
-
+        // Fügt einen Button hinzu, welcher Mitarbeiter importieren kann.
         private void addImportButtonToFrame() {
                 JButton importemployeesButton = new JButton("Importieren");
                 importemployeesButton.setBounds(1000,550,400,75);
@@ -210,7 +214,7 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(importemployeesButton);
         }
-
+        // Fügt einen Button hinzu, welcher Mitarbeiter exportieren kann.
         private void addExportButtonToFrame() {
                 JButton exportemployeesButton = new JButton("Exportieren");
                 exportemployeesButton.setBounds(1000,650,400,75);
@@ -259,7 +263,7 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(exportemployeesButton);
         }
-
+        // Fügt einen Button hinzu, welcher Mitarbeiter ändern kann.
         private void addModifyemployeeButtonToFrame() {
                 JButton modifyemployeeButton = new JButton("Ändern");
                 modifyemployeeButton.setBounds(150, 670, 400, 75);
@@ -280,7 +284,7 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(modifyemployeeButton);
         }
-
+        // Fügt einen Button hinzu, welcher Mitarbeiter löschen kann.
         private void addDeleteemployeeButtonToFrame() {
                 JButton deleteEmployeeButton = new JButton("Löschen");
                 deleteEmployeeButton.setBounds(150,595,400,75);
@@ -299,7 +303,7 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(deleteEmployeeButton);
         }
-
+        // Fügt eine Tabelle zum Darstellen der Jobs zur GUI hinzu und einen Handler, welcher MouseEvents handelt
         private void addemployeeTableToFrame() {
                 String[] employeeTableHeader={"Name","Berufsbezeichnung","Einstellungsdatum","Jahresgehalt"};
                 defaultTableModel = new DefaultTableModel(employeeTableHeader, 0);
@@ -343,7 +347,7 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(employeeTable);
         }
-
+        // Fügt einen Button hinzu, welcher Mitarbeiter hinzufügen kann.
         private void addAddemployeeButtonToFrame() {
                 JButton addEmployeeButton = new JButton("Hinzufügen");
                 addEmployeeButton.setBounds(150,520,400,75);
@@ -361,25 +365,25 @@ public class EmployeeGUI {
                 });
                 employeeFrame.add(addEmployeeButton);
         }
+
+        //Liefert das Startdatum als LocalDate zurück
         private LocalDate getStartDate() {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                 return LocalDate.parse(this.startDate.getText(), dateTimeFormatter);
         }
 
+        // Konvertiert einen String zu LocalDate
         private LocalDate getDateFromString(String date) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                 return LocalDate.parse(date, dateTimeFormatter);
         }
 
+        // Setzt alle Inputs auf leeren Input
         private void resetTextFields() {
                 name.setText("");
                 jobTitle.setText("");
                 startDate.setText("");
                 annualSalary.setText("");
                 activeRow = -1;
-        }
-
-        private void log(Object output) {
-                System.out.println(output);
         }
 }

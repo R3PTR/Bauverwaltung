@@ -129,7 +129,8 @@ public class JobGUI {
 
         loadPossibleJobs();
     }
-
+    // Diese Funktion überprüft, ob alle Felder korrekt ausgefüllt wurden.
+    // Ist alles korrekt, wird true zurückgegeben, gibt es einen Fehler wird false zurückgegeben
     private boolean checkInput() {
         output.setText("");
         boolean correct = true;
@@ -176,6 +177,7 @@ public class JobGUI {
         return correct;
     }
 
+    // Fügt einen Button zum Frame hinzu, welcher die GUI startet, um ein Datenblatt auszugeben.
     private void addShowDatapaperButtonToFrame() {
         JButton showDatapaperButton = new JButton("Datenblatt anzeigen");
         showDatapaperButton.setBounds(580,700,400,50);
@@ -192,6 +194,7 @@ public class JobGUI {
         jobFrame.add(showDatapaperButton);
     }
 
+    // Fügt die zugewiesenen Mitarbeiter zu einem Job hinzu
     private boolean addEmployeesToJob(Job job) {
             boolean correct = true;
             ArrayList<Employee> employeeList =  new ArrayList<Employee>();
@@ -234,10 +237,12 @@ public class JobGUI {
             return correct;
     }
 
+    // Prüft, ob 2 Jobs überlappen
     private boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
         return start1.isBefore(end2) && start2.isBefore(end1);
     }
 
+    // Verknüpft Jobs mit Mitarbeitern
     private void addEmployeesToJob(Job job, String[] employeeNames) {
         ArrayList<Employee> employeeList =  new ArrayList<Employee>();
         for(Employee employee : EmployeeGUI.employeeList) {
@@ -250,6 +255,7 @@ public class JobGUI {
         JobGUI.employeeToJob.put(job, employeeList);
     }
 
+    // Lädt bereits hinzugefügte Jobs der Tabelle hinzu, wenn die JobGUI neu geladen wird.
     private void loadPossibleJobs() {
         if(JobGUI.jobList.size() > 0) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -259,7 +265,7 @@ public class JobGUI {
             }
         }
     }
-
+    //Fügt einen Button zur GUI hinzu, der refreshEmployeeList aufruft
     private void addRefreshEmployeesButton() {
         JButton refreshEmployeesButton = new JButton("Aktualisieren");
         refreshEmployeesButton.setBounds(10,385,130,20);
@@ -272,6 +278,7 @@ public class JobGUI {
         jobFrame.add(refreshEmployeesButton);
     }
 
+    // Aktualisiert die Liste mit Mitarbeitern in der GUI
     private void refreshEmployeesList() {
         if(EmployeeGUI.employeeList.size() < 1) {
             output.setText("Keine Mitarbeiter vorhanden!");
@@ -283,6 +290,7 @@ public class JobGUI {
         }
     }
 
+    // Fügt einen Button hinzu, welcher Jobs importieren kann.
     private void addImportButtonToFrame() {
         JButton importJobsButton = new JButton("Importieren");
         importJobsButton.setBounds(1000,550,400,75);
@@ -322,6 +330,7 @@ public class JobGUI {
         jobFrame.add(importJobsButton);
     }
 
+    // Fügt einen Button hinzu, welcher Jobs exportieren kann.
     private void addExportButtonToFrame() {
         JButton exportJobsButton = new JButton("Exportieren");
         exportJobsButton.setBounds(1000,650,400,75);
@@ -382,6 +391,7 @@ public class JobGUI {
         jobFrame.add(exportJobsButton);
     }
 
+    // Fügt einen Button hinzu, welcher Jobs ändern kann.
     private void addModifyJobButtonToFrame() {
         JButton modifyJobButton = new JButton("Ändern");
         modifyJobButton.setBounds(150, 670, 400, 75);
@@ -411,6 +421,7 @@ public class JobGUI {
         jobFrame.add(modifyJobButton);
     }
 
+    // Fügt einen Button hinzu, welcher Jobs löschen kann.
     private void addDeleteJobButtonToFrame() {
         JButton deleteJobButton = new JButton("Löschen");
         deleteJobButton.setBounds(150,595,400,75);
@@ -433,6 +444,7 @@ public class JobGUI {
         jobFrame.add(deleteJobButton);
     }
 
+    // Fügt eine Tabelle zum Darstellen der Jobs zur GUI hinzu und einen Handler, welcher MouseEvents handelt
     private void addJobTableToFrame() {
         String[] jobTableHeader={"Auftraggeber","Postleitzahl","Adresse","Startdatum","Enddatum", "Aufgaben/Mitarbeiter"};
         defaultTableModel = new DefaultTableModel(jobTableHeader, 0);
@@ -494,6 +506,7 @@ public class JobGUI {
         jobFrame.add(jobTable);
     }
 
+    // Fügt einen Button hinzu, welcher Jobs hinzufügen kann.
     private void addAddJobButtonToFrame() {
         JButton addJobButton = new JButton("Hinzufügen");
         addJobButton.setBounds(150,520,400,75);
@@ -514,20 +527,25 @@ public class JobGUI {
         });
         jobFrame.add(addJobButton);
     }
+
+    //Liefert das Startdatum als LocalDate zurück
     private LocalDate getStartDate() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(this.startDate.getText(), dateTimeFormatter);
     }
+    //Liefert das Enddatum als LocalDate zurück
     private LocalDate getEndDate() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(this.endDate.getText(), dateTimeFormatter);
     }
 
+    // Konvertiert einen String zu LocalDate
     private LocalDate getDateFromString(String date) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(date, dateTimeFormatter);
     }
 
+    // Setzt alle Inputs auf leeren Input
     private void resetTextFields() {
         client.setText("");
         postCode.setText("");
@@ -536,11 +554,5 @@ public class JobGUI {
         startDate.setText("");
         endDate.setText("");
         activeRow = -1;
-    }
-
-    //public static void main(String[] args){new JobGUI();}
-
-    private void log(Object output) {
-        System.out.println(output);
     }
 }

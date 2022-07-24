@@ -12,6 +12,7 @@ public class DatapaperGUI {
     private JTextArea datapaper;
     private JFrame datapaperFrame;
 
+    //Initialisiert die GUI und fügt alle Daten hinzu.
     public DatapaperGUI(Job job) {
         datapaperFrame = new JFrame();
         datapaperFrame.setTitle("Aufträge");
